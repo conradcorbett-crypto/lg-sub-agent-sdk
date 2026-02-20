@@ -1,6 +1,6 @@
 # Multi-Agent System Lab Exercise
 
-This lab demonstrates how to build a customer support system using sub agents that are deployed using Studio or LangSmith Deployments using LangGraph's multi-agent architecture. The system features a **supervisor agent** that intelligently delegates tasks to specialized **subagents** for handling music catalog and invoice queries.
+This lab demonstrates using sub agents deployed by Langsmith Studio. The sub agents are invoked using the langsmith deployments sdk. The system features a **supervisor agent** that delegates tasks to specialized **subagents** for handling music catalog and invoice queries.
 
 This example was adapted from the multiagent workbook found here: https://github.com/langchain-ai/langgraph-101/blob/main/notebooks/201/multi_agent.ipynb
 
@@ -63,7 +63,6 @@ The project includes:
 
 3. **View traces in LangSmith**
 
-   With `distributed_tracing=True`, you can see nested execution traces in LangSmith for debugging and analysis.
 
 ## Project Structure
 
@@ -82,7 +81,6 @@ The project includes:
 The lab includes four levels of evaluation:
 
 1. **Routing Accuracy**: Verify the supervisor routes to the correct subagent
-2. **Response Quality**: Use LLM-as-judge to assess answer correctness
 3. **Subagent Performance**: Test individual subagents in isolation
 4. **End-to-End Testing**: Validate the complete user journey
 
