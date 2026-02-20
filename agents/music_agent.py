@@ -10,6 +10,8 @@ from langchain.messages import SystemMessage
 from langgraph.graph import StateGraph, START, END
 from langchain.tools import tool
 import ast
+import langsmith as ls
+from contextlib import contextmanager
 
 engine = get_engine_for_chinook_db()
 db = SQLDatabase(engine)
@@ -192,4 +194,14 @@ music_workflow.add_conditional_edges(
 
 music_workflow.add_edge("music_tool_node", "music_assistant")
 
-graph = music_workflow.compile(name="music_catalog_subagent")
+compiled_graph = music_workflow.compile(name="music_catalog_subagent")
+
+@contextmanager
+def graph(config):
+    """Context manager that enables distributed tracing by passing parent trace context."""
+    conf = config["configurable"]
+    with ls.tracing_context(
+        parent=conf.get("langsmith-trace"), 
+        project=conf.get("langsmith-project")
+    ):
+        yield compiled_graph

@@ -6,6 +6,9 @@ from typing import Annotated, NotRequired
 from langgraph.graph.message import AnyMessage, add_messages
 from langchain.agents import create_agent
 from langchain.tools import tool, ToolRuntime
+import langsmith as ls
+from contextlib import contextmanager
+
 
 engine = get_engine_for_chinook_db()
 db = SQLDatabase(engine)
@@ -102,4 +105,14 @@ invoice_subagent_prompt = """
     """
 
 # Define the subagent 
-graph = create_agent(model, tools=invoice_tools, name="invoice_information_subagent", system_prompt=invoice_subagent_prompt, state_schema=State)
+compiled_graph = create_agent(model, tools=invoice_tools, name="invoice_information_subagent", system_prompt=invoice_subagent_prompt, state_schema=State)
+
+@contextmanager
+def graph(config):
+    """Context manager that enables distributed tracing by passing parent trace context."""
+    conf = config["configurable"]
+    with ls.tracing_context(
+        parent=conf.get("langsmith-trace"), 
+        project=conf.get("langsmith-project")
+    ):
+        yield compiled_graph
